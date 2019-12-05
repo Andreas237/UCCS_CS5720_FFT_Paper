@@ -1,0 +1,8 @@
+Python Fourier Transform Examples: DFT and FFT
+
+https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
+
+https://www.ritchievink.com/blog/2017/04/23/understanding-the-fourier-transform-by-example/
+
+
+https://rosettacode.org/wiki/Fast_Fourier_transform#Python:_Recursive
