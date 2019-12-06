@@ -19,7 +19,36 @@ from numpy import linspace      # generate inputs
 import slovacek_fft as sf       # my FFT
 from scipy.fftpack import fft   # optimized FFT for comparison
 import time                     # measure times
+from math import floor          # floor exponent in generateBasicSamples
+import logging                  # stop using prints?
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def generateBasicSamples(power=10):
+
+    """
+    @brief Generate 2^power samples.
+    @param power Number of samples to generate, default is 2^10=1024
+    @return Samples generated for testing
+    """
+    return linspace(1,2**(floor(power/2)),num=2**power)
 
 
 
@@ -87,10 +116,101 @@ def generateSamples(start=10,end=60):
 def averageTime(lin):
     """
     @brief Given a list of numbers calculate the average
-    @ param lin list of numic values
-    @ return The average of the list
+    @param lin list of numic values
+    @return The average of the list
     """
     return sum(lin) / len(lin)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def verifyCorrectness(TESTS=10):
+    """
+    @brief Answering 'How did you validate the correctness of your
+    implementation?'
+    @method Generate TESTS sets of data.  Run my FFT versus SciPy FFT and compare
+            the results.
+    @param TESTS Number of data sets to compare FFTs against.  Default 10.
+    """
+
+    def compareArrays(array1,array2):
+        """
+        @brief Given two NumPy arrays, FFT results in this case, compare whether
+               there is element-by-element equivalence.
+        @param array1 numpy.array FFT results
+        @param array2 numpy.array FFT results
+        @return True/False
+        """
+        array1len = len(array1)
+        array2len = len(array2)
+        # Off the bat are they different size?
+        if(array1len != array2len):
+            logging.warn("""\tcompareArrays returned FALSE because the
+                            inputs are of different length.""")
+            # https://docs.python.org/3.8/howto/logging.html#logging-basic-tutorial
+            return False
+
+        else:
+            # Compare i-th value of each array
+            for i in range(array1len):
+                if( round(array1[i],7) != round(array2[i],7)):
+                    logging.warning("Index " + str(i) + "have values:\n" + str(array1[i]) + "\n" + str(array2[i]) )
+                    return False
+            return True
+    # for TESTS
+    #   1) Generate the data set
+    #   2) Run my FFT versus the data set
+    #   3) Run SciPy FFT versus the data set
+    #   4) Compare results
+    #       IF ERROR: count # of errors for this set versus size of set
+    #       ELSE: Continue
+    #   5) Repeat until TESTS is 0
+    diff = True
+    while(TESTS):
+        samples = generateBasicSamples(TESTS) #1
+
+        # 2,3,4
+        if(compareArrays(sf.sfft2(samples),fft(samples)) != True):
+            diff = False
+            logging.warning("\t ARRAYS DIFFER FOR " + str(TESTS) + " samples.")
+        else:
+            logging.info("\t ARRAYS SAME  FOR " + str(TESTS) + " samples.")
+        # 5
+        TESTS -=1
+    if(diff):
+        print("""Successfully verified my FFT calcs the same answer as SciPy FFT to seven digits.""")
+        logging.info("FFT validated against SciPy")
+    else:
+        logging.warning("FFT failed against SciPy")
+
+
+
+
+
 
 
 
