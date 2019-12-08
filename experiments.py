@@ -21,6 +21,7 @@ from scipy.fftpack import fft   # optimized FFT for comparison
 import time                     # measure times
 from math import floor          # floor exponent in generateBasicSamples
 import logging                  # stop using prints?
+from datetime import date       # file naming
 
 
 
@@ -206,6 +207,93 @@ def verifyCorrectness(TESTS=10):
         logging.info("FFT validated against SciPy")
     else:
         logging.warning("FFT failed against SciPy")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def verifyEfficiency(TESTS=10):
+    """
+    @brief Answering 'How did you test your implementation for
+                      efficiency/effectiveness?'
+    @method Run my FFT & SciPy FFT comparing runtimes until they differ by 20%.
+            Log the size of the input data set for reference.
+    @param TESTS Starting exponent for data set size.  2^TESTS is the size of
+           the sample set.  Increment TESTS by 1 at each iteration.
+    """
+
+
+    def setupFile():
+        """ Create a file for writing, set the header, and return its pointer.
+            Name the file with todays date and the current time in milliseconds"""
+
+        fout =  open('./Efficiency_Checks/check_at_' + str(date.today().strftime('%b-%d-%Y'))+ '_' + str(int(round(time.time() * 1000))) + '.csv','w+')
+        fout.write("Samples,Samples_as_Exponents,My_Time,SciPy_Time,Ratio\n")
+        return fout
+
+    ratio = 1
+    exponent = 1
+    beyond_ratio = 0   # After the ratio is exceeded check three more iterations
+
+    fout = setupFile()
+
+    while(beyond_ratio <= 5):
+
+        # 0 Dataset
+        samples = generateBasicSamples(exponent)
+
+        # 1     Run my FFT and log runtime
+        start_time = time.time()
+        sf.sfft2(samples)
+        end_time = time.time()
+        my_time = end_time - start_time
+
+        # 2     Run SciPy FFT and log runtime
+        start_time = time.time()
+        fft(samples)
+        end_time = time.time()
+        scipy_time = end_time - start_time
+
+        # 3     Ratio = (my time)/(scipy time)
+        #               If mine is going 2x slower then cease after 5 iterations
+        ratio = my_time / scipy_time
+        if( ratio > 2 ):
+            beyond_ratio += 1
+        print("Samples: 2**{2}\t\t\tMy time: {0}\t\tSciPy time: {1}\t\tRatio: {3}\t\tBeyond Ratio: {4}".format(my_time,scipy_time,exponent,ratio,beyond_ratio))
+
+        # 4     Write the results to a file
+        #       Format: Samples, Samples_as_Exponents, My_Time, SciPy_Time, Ratio
+        fout.write("{0},2**{1},{2},{3},{4}\n".format(2**exponent,exponent,my_time,scipy_time,ratio))
+
+        # Increment Exponent
+        exponent += 1
+
+    # Close the file
+    fout.close()
+
 
 
 

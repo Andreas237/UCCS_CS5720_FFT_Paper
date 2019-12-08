@@ -1,5 +1,12 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+
+
+# My data files
+Efficiency_Checks/*.csv
+
+
+.DS_Store
 *.py[cod]
 *$py.class
 
