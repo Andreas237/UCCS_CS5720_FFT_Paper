@@ -1,8 +1,9 @@
 import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from experiments import basicExperiment
-import slovacek_fft as sf
+import matplotlib.pyplot as plt     # For plotting
+from experiments import *           # Experiments generate plot data
+import slovacek_fft as sf           # My FFT
+from scipy.fftpack import fft       # optimized FFT for comparison
+import random                       # random number generator for large input comparison
 
 
 
@@ -28,7 +29,7 @@ import slovacek_fft as sf
 
 
 
-
+################################################################################
 def plotter():
     """
     Example plot from https://docs.scipy.org/doc/scipy/reference/tutorial/fftpack.html
@@ -41,6 +42,8 @@ def plotter():
     plt.plot(t, s)
     plt.show()
 
+# End def plotter()
+################################################################################
 
 
 
@@ -68,6 +71,7 @@ def plotter():
 
 
 
+################################################################################
 def fftPlotter():
     """
     Example plot from https://www.ritchievink.com/blog/2017/04/23/understanding-the-fourier-transform-by-example/
@@ -88,6 +92,8 @@ def fftPlotter():
     plt.bar(f[:N // 2], np.abs(fft)[:N // 2] * 1 / N, width=1.5)  # 1 / N is a normalization factor
     plt.show()
 
+# End def fftPlotter()
+################################################################################
 
 
 
@@ -115,49 +121,7 @@ def fftPlotter():
 
 
 
-def plotBasicExperiment():
-    """
-    Plot the results of my basic experiment, defined in experiments.py
-    """
-    mine, optimized = basicExperiment(4,10)
-
-
-    plt.plot(*zip(*mine.items()),label='My FFT',color='r',marker='8',linestyle=':')
-    plt.plot(*zip(*optimized.items()),label='Optimized FFT',color='b',marker='d',linestyle='-.')
-    plt.xlabel('N where Samples to Process is 2^N')
-    plt.ylabel('Runtime (seconds)')
-    plt.title('Runtime of Fast Fourier Transform')
-    plt.grid()      # grid for approximate k-value
-    plt.legend()    # turns on labels in legend
-    plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+################################################################################
 def plotAddedSineWaves():
     """
     Add three sign waves 20,90,110 Hz together and show that waveform
@@ -186,3 +150,324 @@ def plotAddedSineWaves():
     #plt.plot(frequency[:Samples//2], np.abs(fft)[:Samples//2] * 1 / Samples)
 
     plt.show()
+
+# End def plotAddedSineWaves()
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+def plotBasicExperiment():
+    """
+    Plot the results of my basic experiment, defined in experiments.py
+    """
+    mine, optimized = basicExperiment(4,10)
+
+
+    plt.plot(*zip(*mine.items()),label='My FFT',color='r',marker='8',linestyle=':')
+    plt.plot(*zip(*optimized.items()),label='Optimized FFT',color='b',marker='d',linestyle='-.')
+    plt.xlabel('N where Samples to Process is 2^N')
+    plt.ylabel('Runtime (seconds)')
+    plt.title('Runtime of Fast Fourier Transform')
+    plt.grid()      # grid for approximate k-value
+    plt.legend()    # turns on labels in legend
+    plt.show()
+
+# End def plotBasicExperiment()
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+def plotCompareDensities():
+    """
+    Compare a spectrogram of dense points and sparse points with both FFTs
+    """
+
+    # 1 Generate "dense" data
+    dense_samples = 2**12
+    dense_time = np.linspace(0,2,num=dense_samples)
+    dense_interval = dense_time[1] - dense_time[0]          # interval in which to get samples
+    dense_waves =   np.sin(400 * 2 * np.pi * dense_time) \
+                    + np.sin(433 * 2 * np.pi * dense_time)
+
+    # 2 Generate "sparse" data
+    sparse_samples = 2**8
+    sparse_time = np.linspace(0,2,num=sparse_samples)
+    sparse_interval = sparse_time[1] - sparse_time[0]          # interval in which to get samples
+    sparse_waves =   np.sin(400 * 2 * np.pi * sparse_time) \
+                    + np.sin(433 * 2 * np.pi * sparse_time)
+
+
+    # 3 Calculate plot inputs
+    dense_scp = fft(dense_waves)
+    dense_me = sf.sfft2(dense_waves)
+    dense_frequency = np.linspace(0,1/dense_interval,dense_samples) # f = 1/T
+
+    sparse_scp = fft(sparse_waves)
+    sparse_me = sf.sfft2(sparse_waves)
+    sparse_frequency = np.linspace(0,1/sparse_interval,sparse_samples) # f = 1/T
+
+
+
+    # Dense verus sparse data requires 3 rows and 2 columns
+    # plt.subplot(3,2,1)
+
+    """Plot the added frequency waves"""
+    plt.subplot(3,2,1)
+    plt.title("Dense Data Spectrogram")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Time (seconds)")
+    plt.plot(dense_time, dense_waves)
+    plt.grid(True)
+
+
+    plt.subplot(3,2,2)
+    plt.title("Sparse Data Spectrogram")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Time (seconds)")
+    plt.plot(sparse_time, sparse_waves)
+    plt.grid(True)
+
+
+
+
+
+
+    """
+    Plot the SciPy FFTs
+    """
+    plt.subplot(3,2,3)
+    plt.title("SciPy FFT Applied to Dense Data")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(dense_frequency[:dense_samples//2], np.abs(dense_scp)[:dense_samples//2], width=1.5,color='tab:orange')
+    plt.grid(True)
+
+
+    plt.subplot(3,2,4)
+    plt.title("SciPy FFT Applied to Sparse Data")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(sparse_frequency[:sparse_samples//2], np.abs(sparse_scp)[:sparse_samples//2], width=1.5,color='tab:orange')
+    plt.grid(True)
+
+
+
+
+
+
+    """
+    Plot the My FFTs
+    """
+    plt.subplot(3,2,5)
+    plt.title("My FFT Applied to Dense Data")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(dense_frequency[:dense_samples//2], np.abs(dense_me)[:dense_samples//2], width=1.5,color='tab:blue')
+    plt.grid(True)
+
+
+    plt.subplot(3,2,6)
+    plt.title("My FFT Applied to Sparse Data")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(sparse_frequency[:sparse_samples//2], np.abs(sparse_me)[:sparse_samples//2], width=1.5,color='tab:blue')
+    plt.grid(True)
+
+
+
+
+
+
+
+    plt.show()
+
+# end plotCompareDensities
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+def plotCompareSpectrumResults():
+    """
+    Check if my FFT gets the same result as SciPy when applied to actual inputs.
+    Add three sign waves 20,90,110 Hz together and show the waveforms
+    """
+    # time = np.linspace(0,1,2**9)
+    time = np.linspace(0,.5,num=512)
+    waves =   np.sin(50 * 2 * np.pi * time) \
+            + np.sin(110 * 2 * np.pi * time) \
+            + np.sin(175 * 2 * np.pi * time)
+
+    plt.subplot(3,1,1)
+
+    # Plot the sine wave before analysis
+    plt.ylabel("Amplitude")
+    plt.xlabel("Time (seconds)")
+    plt.title("Before analysis")
+    plt.subplot(3,1,1)
+    plt.plot(time, waves)
+    plt.grid(True)
+
+
+
+    # Plot SciPy versus the input
+    scpfft = fft(waves)
+    Interval = time[1] - time[0] # interval in which to get samples
+    Samples = waves.size
+    frequency = np.linspace(0,1/Interval,Samples) # f = 1/T
+    plt.subplot(3,1,2)
+    plt.title("SciPy FFT")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(frequency[:Samples//2], np.abs(scpfft)[:Samples//2], width=1.5,color='tab:orange')
+    plt.grid(True)
+
+
+
+    # Plot Mine versus the input
+    myfft = sf.sfft2(waves)
+    Interval = time[1] - time[0] # interval in which to get samples
+    Samples = waves.size
+    frequency = np.linspace(0,1/Interval,Samples) # f = 1/T
+    plt.subplot(3,1,3)
+    plt.title("My FFT")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(frequency[:Samples//2], np.abs(myfft)[:Samples//2], width=1.5,color='tab:blue')
+    plt.grid(True)
+
+
+
+    plt.show()
+
+# End def plotCompareSpectrumResults()
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+def plotVerifyEfficiency():
+    """
+    Plot the results of the speed test in experiments.py/verifyEfficiency().
+    """
+
+
+    # plot_data[0] - exponent for generating samples, i.e. 2**EXP
+    # plot_data[1] - My FFT runtime for that sample set
+    # plot_data[2] - SciPy FFT runtime for that sample set
+    plot_data = verifyEfficiency()
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(plot_data[0], plot_data[1], color='tab:blue',label='My FFT')   # My times
+    ax.plot(plot_data[0], plot_data[2], color='tab:orange',label='SciPy FFT') # SciPy times
+    ax.set_ylabel("Runtime in Seconds")
+    ax.set_xlabel("Number of Samples, 2^X")
+
+    fig.suptitle("FFT Runtimes versus growing sample sets")
+    ax.legend()
+    plt.show()
+
+# End def plotVerifyEfficiency()
+################################################################################

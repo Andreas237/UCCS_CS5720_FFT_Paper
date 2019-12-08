@@ -2,14 +2,18 @@
 #
 #
 # Plot the experiment
-from graphics import plotBasicExperiment, plotAddedSineWaves
+from graphics import *
 from experiments import *
 
 
 
+# Uncomment for run before writing
+#       verifyCorrectness()
+#       verifyEfficiency()
+#       plotVerifyEfficiency()
+#       plotCompareSpectrumResults()
+plotCompareDensities()
 
-verifyCorrectness()
-verifyEfficiency()
 
 #plotBasicExperiment()
 #plotAddedSineWaves()
