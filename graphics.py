@@ -1,9 +1,9 @@
 import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from experiments import *
-import slovacek_fft as sf
-from scipy.fftpack import fft   # optimized FFT for comparison
+import matplotlib.pyplot as plt     # For plotting
+from experiments import *           # Experiments generate plot data
+import slovacek_fft as sf           # My FFT
+from scipy.fftpack import fft       # optimized FFT for comparison
+import random                       # random number generator for large input comparison
 
 
 
@@ -227,6 +227,140 @@ def plotBasicExperiment():
 
 
 ################################################################################
+def plotCompareDensities():
+    """
+    Compare a spectrogram of dense points and sparse points with both FFTs
+    """
+
+    # 1 Generate "dense" data
+    dense_samples = 2**12
+    dense_time = np.linspace(0,2,num=dense_samples)
+    dense_interval = dense_time[1] - dense_time[0]          # interval in which to get samples
+    dense_waves =   np.sin(400 * 2 * np.pi * dense_time) \
+                    + np.sin(433 * 2 * np.pi * dense_time)
+
+    # 2 Generate "sparse" data
+    sparse_samples = 2**8
+    sparse_time = np.linspace(0,2,num=sparse_samples)
+    sparse_interval = sparse_time[1] - sparse_time[0]          # interval in which to get samples
+    sparse_waves =   np.sin(400 * 2 * np.pi * sparse_time) \
+                    + np.sin(433 * 2 * np.pi * sparse_time)
+
+
+    # 3 Calculate plot inputs
+    dense_scp = fft(dense_waves)
+    dense_me = sf.sfft2(dense_waves)
+    dense_frequency = np.linspace(0,1/dense_interval,dense_samples) # f = 1/T
+
+    sparse_scp = fft(sparse_waves)
+    sparse_me = sf.sfft2(sparse_waves)
+    sparse_frequency = np.linspace(0,1/sparse_interval,sparse_samples) # f = 1/T
+
+
+
+    # Dense verus sparse data requires 3 rows and 2 columns
+    # plt.subplot(3,2,1)
+
+    """Plot the added frequency waves"""
+    plt.subplot(3,2,1)
+    plt.title("Dense Data Spectrogram")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Time (seconds)")
+    plt.plot(dense_time, dense_waves)
+    plt.grid(True)
+
+
+    plt.subplot(3,2,2)
+    plt.title("Sparse Data Spectrogram")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Time (seconds)")
+    plt.plot(sparse_time, sparse_waves)
+    plt.grid(True)
+
+
+
+
+
+
+    """
+    Plot the SciPy FFTs
+    """
+    plt.subplot(3,2,3)
+    plt.title("SciPy FFT Applied to Dense Data")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(dense_frequency[:dense_samples//2], np.abs(dense_scp)[:dense_samples//2], width=1.5,color='tab:orange')
+    plt.grid(True)
+
+
+    plt.subplot(3,2,4)
+    plt.title("SciPy FFT Applied to Sparse Data")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(sparse_frequency[:sparse_samples//2], np.abs(sparse_scp)[:sparse_samples//2], width=1.5,color='tab:orange')
+    plt.grid(True)
+
+
+
+
+
+
+    """
+    Plot the My FFTs
+    """
+    plt.subplot(3,2,5)
+    plt.title("My FFT Applied to Dense Data")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(dense_frequency[:dense_samples//2], np.abs(dense_me)[:dense_samples//2], width=1.5,color='tab:blue')
+    plt.grid(True)
+
+
+    plt.subplot(3,2,6)
+    plt.title("My FFT Applied to Sparse Data")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(sparse_frequency[:sparse_samples//2], np.abs(sparse_me)[:sparse_samples//2], width=1.5,color='tab:blue')
+    plt.grid(True)
+
+
+
+
+
+
+
+    plt.show()
+
+# end plotCompareDensities
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
 def plotCompareSpectrumResults():
     """
     Check if my FFT gets the same result as SciPy when applied to actual inputs.
@@ -246,6 +380,7 @@ def plotCompareSpectrumResults():
     plt.title("Before analysis")
     plt.subplot(3,1,1)
     plt.plot(time, waves)
+    plt.grid(True)
 
 
 
@@ -259,6 +394,7 @@ def plotCompareSpectrumResults():
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
     plt.bar(frequency[:Samples//2], np.abs(scpfft)[:Samples//2], width=1.5,color='tab:orange')
+    plt.grid(True)
 
 
 
@@ -272,6 +408,7 @@ def plotCompareSpectrumResults():
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
     plt.bar(frequency[:Samples//2], np.abs(myfft)[:Samples//2], width=1.5,color='tab:blue')
+    plt.grid(True)
 
 
 

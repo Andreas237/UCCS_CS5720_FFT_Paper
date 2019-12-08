@@ -42,6 +42,7 @@ from datetime import date       # file naming
 
 
 
+################################################################################
 def generateBasicSamples(power=10):
 
     """
@@ -50,6 +51,8 @@ def generateBasicSamples(power=10):
     @return Samples generated for testing
     """
     return linspace(1,2**(floor(power/2)),num=2**power)
+# end generateBasicSamples
+################################################################################
 
 
 
@@ -69,6 +72,7 @@ def generateBasicSamples(power=10):
 
 
 
+################################################################################
 def generateSamples(start=10,end=60):
 
     """
@@ -94,6 +98,8 @@ def generateSamples(start=10,end=60):
     samples = { n: linspace(1,2**n,num=2**(n+1)) for n in range(start,end) }
     # return the dictionary
     return samples
+# end generateSamples
+################################################################################
 
 
 
@@ -113,7 +119,7 @@ def generateSamples(start=10,end=60):
 
 
 
-
+################################################################################
 def averageTime(lin):
     """
     @brief Given a list of numbers calculate the average
@@ -121,6 +127,8 @@ def averageTime(lin):
     @return The average of the list
     """
     return sum(lin) / len(lin)
+# end averageTime
+################################################################################
 
 
 
@@ -149,6 +157,83 @@ def averageTime(lin):
 
 
 
+
+
+
+################################################################################
+def basicExperiment(start=10,end=11):
+    """
+    Run Slovacek FFT 10 times for every sample.
+    """
+
+    # Generate sample inputs
+    samples = generateSamples(start,end)
+
+    # How many measures to take versus each sample
+    measure_count = 10
+
+
+    # Initialize dictionaries to capture key=n (2^n samples) versus average time
+    # for FFT computation
+    slovacek_data = {}
+    scipy_data = {}
+    # Measure Slovacek FFT vs. SciPy FFT
+    for k,v in samples.items():
+        # Lists to capture runtime for each FFT
+        slovacek_times = []
+        optimized_times = []
+
+        print("Running experiments for key ",k," of ",end," with ",2**k," samples.")
+        # Run each FFT multiple times
+        for i in range(measure_count):
+
+            # Time Slovacek FFT
+            start_time = time.time()
+            sf.sfft2(v)
+            end_time = time.time()
+            slovacek_times.append(end_time-start_time)
+
+            # Times for SciPy FFT
+            start_time = time.time()
+            fft(v)
+            end_time = time.time()
+            optimized_times.append(end_time-start_time)
+
+        # Add the data points to the dictionary
+        slovacek_data[k] = averageTime(slovacek_times)
+        scipy_data[k] = averageTime(optimized_times)
+
+    return slovacek_data, scipy_data
+# End def basicExperiment()
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
 def verifyCorrectness(TESTS=10):
     """
     @brief Answering 'How did you validate the correctness of your
@@ -207,6 +292,8 @@ def verifyCorrectness(TESTS=10):
         logging.info("FFT validated against SciPy")
     else:
         logging.warning("FFT failed against SciPy")
+# end verifyCorrectness
+################################################################################
 
 
 
@@ -235,6 +322,7 @@ def verifyCorrectness(TESTS=10):
 
 
 
+################################################################################
 def verifyEfficiency(EXPONENT=1):
     """
     @brief Answering 'How did you test your implementation for
@@ -302,80 +390,5 @@ def verifyEfficiency(EXPONENT=1):
     fout.close()
 
     return plot_data
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def basicExperiment(start=10,end=11):
-    """
-    Run Slovacek FFT 10 times for every sample.
-    """
-
-    # Generate sample inputs
-    samples = generateSamples(start,end)
-
-    # How many measures to take versus each sample
-    measure_count = 10
-
-
-    # Initialize dictionaries to capture key=n (2^n samples) versus average time
-    # for FFT computation
-    slovacek_data = {}
-    scipy_data = {}
-    # Measure Slovacek FFT vs. SciPy FFT
-    for k,v in samples.items():
-        # Lists to capture runtime for each FFT
-        slovacek_times = []
-        optimized_times = []
-
-        print("Running experiments for key ",k," of ",end," with ",2**k," samples.")
-        # Run each FFT multiple times
-        for i in range(measure_count):
-
-            # Time Slovacek FFT
-            start_time = time.time()
-            sf.sfft2(v)
-            end_time = time.time()
-            slovacek_times.append(end_time-start_time)
-
-            # Times for SciPy FFT
-            start_time = time.time()
-            fft(v)
-            end_time = time.time()
-            optimized_times.append(end_time-start_time)
-
-        # Add the data points to the dictionary
-        slovacek_data[k] = averageTime(slovacek_times)
-        scipy_data[k] = averageTime(optimized_times)
-
-    return slovacek_data, scipy_data
+# end verifyEfficiency
+################################################################################

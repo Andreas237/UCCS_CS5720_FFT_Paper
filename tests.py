@@ -12,6 +12,7 @@ from experiments import *
 #       verifyEfficiency()
 #       plotVerifyEfficiency()
 #       plotCompareSpectrumResults()
+plotCompareDensities()
 
 
 #plotBasicExperiment()
