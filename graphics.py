@@ -3,6 +3,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from experiments import *
 import slovacek_fft as sf
+from scipy.fftpack import fft   # optimized FFT for comparison
 
 
 
@@ -28,7 +29,7 @@ import slovacek_fft as sf
 
 
 
-
+################################################################################
 def plotter():
     """
     Example plot from https://docs.scipy.org/doc/scipy/reference/tutorial/fftpack.html
@@ -41,6 +42,8 @@ def plotter():
     plt.plot(t, s)
     plt.show()
 
+# End def plotter()
+################################################################################
 
 
 
@@ -68,6 +71,7 @@ def plotter():
 
 
 
+################################################################################
 def fftPlotter():
     """
     Example plot from https://www.ritchievink.com/blog/2017/04/23/understanding-the-fourier-transform-by-example/
@@ -88,6 +92,8 @@ def fftPlotter():
     plt.bar(f[:N // 2], np.abs(fft)[:N // 2] * 1 / N, width=1.5)  # 1 / N is a normalization factor
     plt.show()
 
+# End def fftPlotter()
+################################################################################
 
 
 
@@ -115,49 +121,7 @@ def fftPlotter():
 
 
 
-def plotBasicExperiment():
-    """
-    Plot the results of my basic experiment, defined in experiments.py
-    """
-    mine, optimized = basicExperiment(4,10)
-
-
-    plt.plot(*zip(*mine.items()),label='My FFT',color='r',marker='8',linestyle=':')
-    plt.plot(*zip(*optimized.items()),label='Optimized FFT',color='b',marker='d',linestyle='-.')
-    plt.xlabel('N where Samples to Process is 2^N')
-    plt.ylabel('Runtime (seconds)')
-    plt.title('Runtime of Fast Fourier Transform')
-    plt.grid()      # grid for approximate k-value
-    plt.legend()    # turns on labels in legend
-    plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+################################################################################
 def plotAddedSineWaves():
     """
     Add three sign waves 20,90,110 Hz together and show that waveform
@@ -187,6 +151,8 @@ def plotAddedSineWaves():
 
     plt.show()
 
+# End def plotAddedSineWaves()
+################################################################################
 
 
 
@@ -214,8 +180,142 @@ def plotAddedSineWaves():
 
 
 
+################################################################################
+def plotBasicExperiment():
+    """
+    Plot the results of my basic experiment, defined in experiments.py
+    """
+    mine, optimized = basicExperiment(4,10)
+
+
+    plt.plot(*zip(*mine.items()),label='My FFT',color='r',marker='8',linestyle=':')
+    plt.plot(*zip(*optimized.items()),label='Optimized FFT',color='b',marker='d',linestyle='-.')
+    plt.xlabel('N where Samples to Process is 2^N')
+    plt.ylabel('Runtime (seconds)')
+    plt.title('Runtime of Fast Fourier Transform')
+    plt.grid()      # grid for approximate k-value
+    plt.legend()    # turns on labels in legend
+    plt.show()
+
+# End def plotBasicExperiment()
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+def plotCompareSpectrumResults():
+    """
+    Check if my FFT gets the same result as SciPy when applied to actual inputs.
+    Add three sign waves 20,90,110 Hz together and show the waveforms
+    """
+    # time = np.linspace(0,1,2**9)
+    time = np.linspace(0,.5,num=512)
+    waves =   np.sin(50 * 2 * np.pi * time) \
+            + np.sin(110 * 2 * np.pi * time) \
+            + np.sin(175 * 2 * np.pi * time)
+
+    plt.subplot(3,1,1)
+
+    # Plot the sine wave before analysis
+    plt.ylabel("Amplitude")
+    plt.xlabel("Time (seconds)")
+    plt.title("Before analysis")
+    plt.subplot(3,1,1)
+    plt.plot(time, waves)
+
+
+
+    # Plot SciPy versus the input
+    scpfft = fft(waves)
+    Interval = time[1] - time[0] # interval in which to get samples
+    Samples = waves.size
+    frequency = np.linspace(0,1/Interval,Samples) # f = 1/T
+    plt.subplot(3,1,2)
+    plt.title("SciPy FFT")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(frequency[:Samples//2], np.abs(scpfft)[:Samples//2], width=1.5,color='tab:orange')
+
+
+
+    # Plot Mine versus the input
+    myfft = sf.sfft2(waves)
+    Interval = time[1] - time[0] # interval in which to get samples
+    Samples = waves.size
+    frequency = np.linspace(0,1/Interval,Samples) # f = 1/T
+    plt.subplot(3,1,3)
+    plt.title("My FFT")
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency (hertz)")
+    plt.bar(frequency[:Samples//2], np.abs(myfft)[:Samples//2], width=1.5,color='tab:blue')
+
+
+
+    plt.show()
+
+# End def plotCompareSpectrumResults()
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
 def plotVerifyEfficiency():
-    """Plot the results of the speed test in experiments.py/verifyEfficiency()."""
+    """
+    Plot the results of the speed test in experiments.py/verifyEfficiency().
+    """
+
+
     # plot_data[0] - exponent for generating samples, i.e. 2**EXP
     # plot_data[1] - My FFT runtime for that sample set
     # plot_data[2] - SciPy FFT runtime for that sample set
@@ -231,3 +331,6 @@ def plotVerifyEfficiency():
     fig.suptitle("FFT Runtimes versus growing sample sets")
     ax.legend()
     plt.show()
+
+# End def plotVerifyEfficiency()
+################################################################################

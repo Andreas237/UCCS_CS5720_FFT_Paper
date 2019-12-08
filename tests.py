@@ -2,15 +2,18 @@
 #
 #
 # Plot the experiment
-from graphics import plotBasicExperiment, plotAddedSineWaves, plotVerifyEfficiency
+from graphics import *
 from experiments import *
 
 
 
+# Uncomment for run before writing
+#       verifyCorrectness()
+#       verifyEfficiency()
+#       plotVerifyEfficiency()
+#       plotCompareSpectrumResults()
 
-verifyCorrectness()
-verifyEfficiency()
-plotVerifyEfficiency()
+
 #plotBasicExperiment()
 #plotAddedSineWaves()
 #mine, optimized = basicExperiment(10,20)

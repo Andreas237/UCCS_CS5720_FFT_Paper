@@ -283,11 +283,12 @@ def verifyEfficiency(EXPONENT=1):
         ratio = my_time / scipy_time
         if( ratio > 2 ):
             beyond_ratio += 1
-        print("Samples: 2**{2}\t\t\tMy time: {0}\t\tSciPy time: {1}\t\tRatio: {3}\t\tBeyond Ratio: {4}".format(my_time,scipy_time,EXPONENT,ratio,beyond_ratio))
+
 
         # 4     Write the results to a file
         #       Format: Samples, Samples_as_Exponents, My_Time, SciPy_Time, Ratio
         fout.write("{0},2**{1},{2},{3},{4}\n".format(2**EXPONENT,EXPONENT,my_time,scipy_time,ratio))
+        #print("Samples: 2**{2}\t\t\tMy time: {0}\t\tSciPy time: {1}\t\tRatio: {3}\t\tBeyond Ratio: {4}".format(my_time,scipy_time,EXPONENT,ratio,beyond_ratio))
 
         # 5 Increment Exponent
         EXPONENT += 1
