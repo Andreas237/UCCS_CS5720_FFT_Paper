@@ -9,6 +9,7 @@ from experiments import *
 
 
 verifyCorrectness()
+verifyEfficiency()
 
 #plotBasicExperiment()
 #plotAddedSineWaves()
