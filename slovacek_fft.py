@@ -60,7 +60,7 @@ def sfft2(xIn):
 
     # Compute roots of unity/twiddle factors, O(N)
     w = [ Xodd[i] * exp(-2j*pi*i/xLen) for i in range(xLen//2)] # floor(xLen/2)
-    # Re-combine the two halves
+    # Re-combine the two halves, Twiddle factors computed once.
     r1 = [ Xeven[i]+w[i] for i in range(xLen//2)]   # O(N)
     r2 = [ Xeven[i]-w[i] for i in range(xLen//2)]   # O(N)
     return r1 + r2
