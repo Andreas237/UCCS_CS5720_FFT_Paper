@@ -235,14 +235,14 @@ def verifyCorrectness(TESTS=10):
 
 
 
-def verifyEfficiency(TESTS=10):
+def verifyEfficiency(EXPONENT=1):
     """
     @brief Answering 'How did you test your implementation for
                       efficiency/effectiveness?'
     @method Run my FFT & SciPy FFT comparing runtimes until they differ by 20%.
             Log the size of the input data set for reference.
-    @param TESTS Starting exponent for data set size.  2^TESTS is the size of
-           the sample set.  Increment TESTS by 1 at each iteration.
+    @param EXPONENT Starting exponent for data set size.  2^EXPONENT is the size
+           of the sample set.  Increment TESTS by 1 at each iteration.
     """
 
 
@@ -254,16 +254,17 @@ def verifyEfficiency(TESTS=10):
         fout.write("Samples,Samples_as_Exponents,My_Time,SciPy_Time,Ratio\n")
         return fout
 
-    ratio = 1
-    exponent = 1
-    beyond_ratio = 0   # After the ratio is exceeded check three more iterations
 
-    fout = setupFile()
 
-    while(beyond_ratio <= 5):
+    ratio = 1           # (my time)/(scipy time)
+    beyond_ratio = 0    # After the ratio is exceeded check three more iterations
+    fout = setupFile()  # Data file for logging results
+    plot_data = ([],[],[])
+
+    while(beyond_ratio <= 8):
 
         # 0 Dataset
-        samples = generateBasicSamples(exponent)
+        samples = generateBasicSamples(EXPONENT)
 
         # 1     Run my FFT and log runtime
         start_time = time.time()
@@ -277,22 +278,29 @@ def verifyEfficiency(TESTS=10):
         end_time = time.time()
         scipy_time = end_time - start_time
 
-        # 3     Ratio = (my time)/(scipy time)
+        # 3     Ratio =
         #               If mine is going 2x slower then cease after 5 iterations
         ratio = my_time / scipy_time
         if( ratio > 2 ):
             beyond_ratio += 1
-        print("Samples: 2**{2}\t\t\tMy time: {0}\t\tSciPy time: {1}\t\tRatio: {3}\t\tBeyond Ratio: {4}".format(my_time,scipy_time,exponent,ratio,beyond_ratio))
+        print("Samples: 2**{2}\t\t\tMy time: {0}\t\tSciPy time: {1}\t\tRatio: {3}\t\tBeyond Ratio: {4}".format(my_time,scipy_time,EXPONENT,ratio,beyond_ratio))
 
         # 4     Write the results to a file
         #       Format: Samples, Samples_as_Exponents, My_Time, SciPy_Time, Ratio
-        fout.write("{0},2**{1},{2},{3},{4}\n".format(2**exponent,exponent,my_time,scipy_time,ratio))
+        fout.write("{0},2**{1},{2},{3},{4}\n".format(2**EXPONENT,EXPONENT,my_time,scipy_time,ratio))
 
-        # Increment Exponent
-        exponent += 1
+        # 5 Increment Exponent
+        EXPONENT += 1
+
+        # 6 Save result for plotting
+        plot_data[0].append(EXPONENT)
+        plot_data[1].append(my_time)
+        plot_data[2].append(scipy_time)
 
     # Close the file
     fout.close()
+
+    return plot_data
 
 
 

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from experiments import basicExperiment
+from experiments import *
 import slovacek_fft as sf
 
 
@@ -185,4 +185,49 @@ def plotAddedSineWaves():
     plt.bar(frequency[:Samples//2], np.abs(fft)[:Samples//2], width=1.5)
     #plt.plot(frequency[:Samples//2], np.abs(fft)[:Samples//2] * 1 / Samples)
 
+    plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def plotVerifyEfficiency():
+    """Plot the results of the speed test in experiments.py/verifyEfficiency()."""
+    # plot_data[0] - exponent for generating samples, i.e. 2**EXP
+    # plot_data[1] - My FFT runtime for that sample set
+    # plot_data[2] - SciPy FFT runtime for that sample set
+    plot_data = verifyEfficiency()
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(plot_data[0], plot_data[1], color='tab:blue',label='My FFT')   # My times
+    ax.plot(plot_data[0], plot_data[2], color='tab:orange',label='SciPy FFT') # SciPy times
+    ax.set_ylabel("Runtime in Seconds")
+    ax.set_xlabel("Number of Samples, 2^X")
+
+    fig.suptitle("FFT Runtimes versus growing sample sets")
+    ax.legend()
     plt.show()
