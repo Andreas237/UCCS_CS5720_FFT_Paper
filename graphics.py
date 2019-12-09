@@ -1,9 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt     # For plotting
-from experiments import *           # Experiments generate plot data
-import slovacek_fft as sf           # My FFT
-from scipy.fftpack import fft       # optimized FFT for comparison
-import random                       # random number generator for large input comparison
+import matplotlib.pyplot as plt         # For plotting
+from experiments import *               # Experiments generate plot data
+import slovacek_fft as sf               # My FFT
+from scipy.fftpack import fft           # optimized FFT for comparison
+from scipy import signal                # Spectrogram and Periodogram
+from scipy.io import wavfile            # Read a WAV file
+import random                           # random number generator for large input comparison
 
 
 
@@ -89,6 +91,7 @@ def fftPlotter():
 
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency [Hz]")
+    # Real signal symmetry only requires half the samples
     plt.bar(f[:N // 2], np.abs(fft)[:N // 2] * 1 / N, width=1.5)  # 1 / N is a normalization factor
     plt.show()
 
@@ -146,6 +149,7 @@ def plotAddedSineWaves():
     plt.subplot(1,2,2)
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
+    # Real signal symmetry only requires half the samples
     plt.bar(frequency[:Samples//2], np.abs(fft)[:Samples//2], width=1.5)
     #plt.plot(frequency[:Samples//2], np.abs(fft)[:Samples//2] * 1 / Samples)
 
@@ -289,6 +293,7 @@ def plotCompareDensities():
     plt.title("SciPy FFT Applied to Dense Data")
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
+    # Real signal symmetry only requires half the samples
     plt.bar(dense_frequency[:dense_samples//2], np.abs(dense_scp)[:dense_samples//2], width=1.5,color='tab:orange')
     plt.grid(True)
 
@@ -297,6 +302,7 @@ def plotCompareDensities():
     plt.title("SciPy FFT Applied to Sparse Data")
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
+    # Real signal symmetry only requires half the samples
     plt.bar(sparse_frequency[:sparse_samples//2], np.abs(sparse_scp)[:sparse_samples//2], width=1.5,color='tab:orange')
     plt.grid(True)
 
@@ -312,6 +318,7 @@ def plotCompareDensities():
     plt.title("My FFT Applied to Dense Data")
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
+    # Real signal symmetry only requires half the samples
     plt.bar(dense_frequency[:dense_samples//2], np.abs(dense_me)[:dense_samples//2], width=1.5,color='tab:blue')
     plt.grid(True)
 
@@ -320,6 +327,7 @@ def plotCompareDensities():
     plt.title("My FFT Applied to Sparse Data")
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
+    # Real signal symmetry only requires half the samples
     plt.bar(sparse_frequency[:sparse_samples//2], np.abs(sparse_me)[:sparse_samples//2], width=1.5,color='tab:blue')
     plt.grid(True)
 
@@ -328,7 +336,7 @@ def plotCompareDensities():
 
 
 
-
+    plt.tight_layout()
     plt.show()
 
 # end plotCompareDensities
@@ -366,7 +374,7 @@ def plotCompareSpectrumResults():
     Check if my FFT gets the same result as SciPy when applied to actual inputs.
     Add three sign waves 20,90,110 Hz together and show the waveforms
     """
-    # time = np.linspace(0,1,2**9)
+
     time = np.linspace(0,.5,num=512)
     waves =   np.sin(50 * 2 * np.pi * time) \
             + np.sin(110 * 2 * np.pi * time) \
@@ -393,6 +401,7 @@ def plotCompareSpectrumResults():
     plt.title("SciPy FFT")
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
+    # Real signal symmetry only requires half the samples
     plt.bar(frequency[:Samples//2], np.abs(scpfft)[:Samples//2], width=1.5,color='tab:orange')
     plt.grid(True)
 
@@ -407,11 +416,12 @@ def plotCompareSpectrumResults():
     plt.title("My FFT")
     plt.ylabel("Amplitude")
     plt.xlabel("Frequency (hertz)")
+    # Real signal symmetry only requires half the samples
     plt.bar(frequency[:Samples//2], np.abs(myfft)[:Samples//2], width=1.5,color='tab:blue')
     plt.grid(True)
 
 
-
+    plt.tight_layout()
     plt.show()
 
 # End def plotCompareSpectrumResults()
@@ -470,4 +480,143 @@ def plotVerifyEfficiency():
     plt.show()
 
 # End def plotVerifyEfficiency()
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+def plotWavAnalysis():
+    """
+    Read .WAV files, then plot the spectrogram with power-spectral density.
+    Refer to: https://stackoverflow.com/questions/44787437/how-to-convert-a-wav-file-to-a-spectrogram-in-python3
+
+    Method:
+        Spectrogram and Periodogram want to generate their own frequencies.
+        Attempt 1 I'll substitute mine with theirs.
+
+        Failed to use mine since it isn't windowed.
+    """
+    # Cut to the last ~30 seconds of the song since it had the most interesting
+    # spectrogram.
+    rate, data = wavfile.read('./Give_Love_A_Try.wav')
+    f, t, Sxx = signal.spectrogram(data,rate)
+
+    #my_f = sf.sfft2(data)
+    #plt.pcolormesh(t, nf, np.log(Sxx))
+
+
+    plt.pcolormesh(t, f, np.log(Sxx))
+    plt.title("Cut of 'Give Love A Try,' by Unknown - Spectrogram with PSD")
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.show()
+
+# End def plotWavAnalysis()
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+def plotWavAnalysisDeep():
+    """
+    Read .WAV files, then plot a full analysis of the signal as in:
+    https://matplotlib.org/gallery/lines_bars_and_markers/spectrum_demo.html#sphx-glr-gallery-lines-bars-and-markers-spectrum-demo-py
+
+    Plot 1:
+    """
+    # Cut to the last ~30 seconds of the song since it had the most interesting
+    # spectrogram.
+    rate, data = wavfile.read('./Give_Love_A_Try.wav')
+    f, t, Sxx = signal.spectrogram(data,rate)
+
+    myfft = sf.sfft2(f)
+    Interval = t[t.size-1] - t[0]
+    Fs = len(myfft)                     # no. of samples
+    s = np.abs(myfft)[:len(myfft)//2]   # Real signal symmetry only requires half the samples
+
+
+    # plot time signal:
+    plt.subplot(3,2,1)
+    plt.title("Signal")
+    plt.plot(s , color='C0')
+    plt.xlabel("Time")
+    plt.ylabel("Amplitude")
+
+    # plot different spectrum types:
+    plt.subplot(3,2,3)
+    plt.title("Magnitude Spectrum")
+    plt.magnitude_spectrum(s, Fs=Fs, color='C1')
+
+
+    plt.subplot(3,2,4)
+    plt.title("Logarithmic Magnitude Spectrum")
+    plt.magnitude_spectrum(s, Fs=Fs, scale='dB', color='C1')
+
+
+    plt.subplot(3,2,5)
+    plt.title("Phase Spectrum")
+    plt.phase_spectrum(s, Fs=Fs, color='C2')
+
+
+    plt.subplot(3,2,6)
+    plt.title("Anlge Spectrum")
+    plt.angle_spectrum(s, Fs=Fs, color='C2')
+    plt.tight_layout()
+    plt.show()
+
+# End def plotWavAnalysisDeep()
 ################################################################################

@@ -22,3 +22,8 @@ Submit a 5-15 page report detailing what you did on your project. Most projects 
 If you give me a draft by December 1st, I will return it within a week with comments on its appropriateness for the final project report.
 
 
+
+### Repository Pages ###
+ 1. [Some of the notes on what I learned working on this project](https://github.com/Andreas237/UCCS_CS5720_FFT_Paper/blob/master/LEARNING.md)
+ 2. [Resources referenced while working on this project](https://github.com/Andreas237/UCCS_CS5720_FFT_Paper/blob/master/RESOURCES.md)
+ 3. [Readme](https://github.com/Andreas237/UCCS_CS5720_FFT_Paper/blob/master/README.md)
