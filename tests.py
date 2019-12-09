@@ -11,9 +11,10 @@ from experiments import *
 #       verifyCorrectness()
 #       verifyEfficiency()
 #       plotVerifyEfficiency()
-#       plotCompareSpectrumResults()
+plotCompareSpectrumResults()
 plotCompareDensities()
-
+#       plotWavAnalysis()
+plotWavAnalysisDeep()
 
 #plotBasicExperiment()
 #plotAddedSineWaves()
