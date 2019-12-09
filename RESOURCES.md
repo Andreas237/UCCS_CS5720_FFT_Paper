@@ -7,6 +7,7 @@ Here is a summary of who I learned from while working through this project.
 * [Carnegie-Mellon's walkthrough](https://www.cs.cmu.edu/afs/andrew/scs/cs/15-463/2001/pub/www/notes/fourier/fourier.pdf)
 * [Geeks for geeks on multithreading](https://www.geeksforgeeks.org/multithreading-in-python-set-2-synchronization/)
 * [devarea for information on multiprocessing](https://devarea.com/python-multitasking-multithreading-multiprocessing/)
+* [Charting all the analysis of a signal with Matplotlib](https://matplotlib.org/gallery/lines_bars_and_markers/spectrum_demo.html#sphx-glr-gallery-lines-bars-and-markers-spectrum-demo-py)
 
 
 
