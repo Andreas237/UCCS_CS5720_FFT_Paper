@@ -4,7 +4,7 @@ __pycache__/
 
 # My data files
 Efficiency_Checks/*.csv
-
+Graphics/
 
 .DS_Store
 *.py[cod]

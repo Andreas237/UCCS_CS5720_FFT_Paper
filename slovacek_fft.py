@@ -64,7 +64,8 @@ def sfft2(xIn):
     r1 = [ Xeven[i]+w[i] for i in range(xLen//2)]   # O(N)
     r2 = [ Xeven[i]-w[i] for i in range(xLen//2)]   # O(N)
     return r1 + r2
-
+# end def sfft2(xIn)
+################################################################################
 
 
 

@@ -10,12 +10,12 @@ from experiments import *
 # Uncomment for run before writing
 #       verifyCorrectness()
 #       verifyEfficiency()
-#       plotVerifyEfficiency()
-plotCompareSpectrumResults()
-plotCompareDensities()
-#       plotWavAnalysis()
+#plotVerifyEfficiency()
+#plotCompareSpectrumResults()
+#plotCompareDensities()
+#plotWavAnalysis()
 plotWavAnalysisDeep()
 
-#plotBasicExperiment()
+# plotBasicExperiment()
 #plotAddedSineWaves()
 #mine, optimized = basicExperiment(10,20)
